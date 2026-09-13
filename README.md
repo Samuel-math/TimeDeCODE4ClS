@@ -2,7 +2,7 @@
 
 This repository provides code for multivariate time-series classification on the UEA datasets.
 
-The VQ-VAE uses a shared, single-level discrete codebook. A bidirectional Transformer predicts masked code IDs, then its representations feed a classification head. Classification fine-tunes the token embedding, Transformer and head; the VQ-VAE is frozen and its tokens are cached. All three stages are trained separately on each dataset from scratch.
+Time-DeCode is a method for multivariate time-series classification. It first trains a VQ-VAE to encode time-series patches into discrete tokens. A bidirectional Transformer is then pretrained to predict masked tokens, learning contextual representations of the sequence. Finally, a classification head is added, and the token embeddings, Transformer, and classification head are fine-tuned using labeled data while the VQ-VAE remains frozen.
 
 ## Setup
 
