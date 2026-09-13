@@ -61,16 +61,18 @@ The model and data-protocol unit tests passed on H20 / PyTorch 2.7.1+cu126. The 
 
 Best observed accuracy per dataset across the completed tuning runs, using the `test_selection` protocol rather than the default protocol above. All three stages are trained from scratch separately on each target dataset. The mean is calculated from unrounded accuracies.
 
-| Dataset | Accuracy (%) |
-|---|---:|
-| EthanolConcentration | 30.04 |
-| FaceDetection | 65.49 |
-| Handwriting | 17.76 |
-| Heartbeat | 80.98 |
-| JapaneseVowels | 98.11 |
-| PEMS-SF | 89.60 |
-| SelfRegulationSCP1 | 87.37 |
-| SelfRegulationSCP2 | 57.22 |
-| SpokenArabicDigits | 98.27 |
-| UWaveGestureLibrary | 85.31 |
-| **Mean** | **71.02** |
+TimesNet values below are the reference numbers supplied for this comparison; protocol equivalence has not been independently verified. **Bold** marks the higher accuracy among the two listed methods. ★ marks Time-DeCode exceeding the supplied TimesNet baseline, not a claim of overall SOTA. Heartbeat is shown with extra precision to avoid a rounding-induced tie.
+
+| Dataset | Time-DeCode (%) | TimesNet (%) |
+|---|---:|---:|
+| EthanolConcentration | 30.04 | **31.94** |
+| FaceDetection | 65.49 | **67.45** |
+| Handwriting | 17.76 | **32.47** |
+| Heartbeat | 80.9756 | **80.98** |
+| JapaneseVowels ★ | **98.11** | 97.84 |
+| PEMS-SF ★ | **89.60** | 87.86 |
+| SelfRegulationSCP1 | 87.37 | **91.47** |
+| SelfRegulationSCP2 | 57.22 | **60.00** |
+| SpokenArabicDigits | 98.27 | **99.27** |
+| UWaveGestureLibrary | 85.31 | **88.13** |
+| Mean | 71.02 | **73.74** |
