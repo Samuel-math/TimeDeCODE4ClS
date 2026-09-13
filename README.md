@@ -1,6 +1,6 @@
 # TimeDeCODE4ClS
 
-A standalone time-series classification pipeline: **standard VQ-VAE → masked-token pretraining → supervised classification**.
+This repository provides code for multivariate time-series classification on the UEA datasets.
 
 The VQ-VAE uses a shared, single-level discrete codebook. A bidirectional Transformer predicts masked code IDs, then its representations feed a classification head. Classification fine-tunes the token embedding, Transformer and head; the VQ-VAE is frozen and its tokens are cached. All three stages are trained separately on each dataset from scratch.
 
