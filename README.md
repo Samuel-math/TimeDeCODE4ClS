@@ -57,9 +57,9 @@ Each run saves parameters, package versions, split indices, normalization, data 
 
 The model and data-protocol unit tests passed on H20 / PyTorch 2.7.1+cu126. The smoke run on JapaneseVowels (1 VQ-VAE epoch, 1 masked-pretraining epoch, 2 classification epochs) obtained 84.05% TEST accuracy with seed 42. This is a pipeline check, not a tuned benchmark.
 
-## UEA classification results (TEST-selected, seed=42)
+## UEA classification results
 
-Best observed accuracy per dataset across the completed tuning runs, using the `test_selection` protocol rather than the default protocol above. All three stages are trained from scratch separately on each target dataset. The mean is calculated from unrounded accuracies.
+Best observed accuracy per dataset across the completed tuning runs with seed 42, using the `test_selection` protocol rather than the default protocol above. All three stages are trained from scratch separately on each target dataset. The mean is calculated from unrounded accuracies.
 
 TimesNet values below are the reference numbers supplied for this comparison; protocol equivalence has not been independently verified. **Bold** and ★ mark Time-DeCode exceeding the supplied TimesNet baseline, not a claim of overall SOTA. These datasets are listed first. Heartbeat is shown with extra precision to avoid a rounding-induced tie.
 
