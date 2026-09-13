@@ -50,26 +50,33 @@ def digest(path):
     return h.hexdigest()
 
 
-def prepare(root, name, patch_size, max_length, seed, val_ratio):
+def prepare(root, name, patch_size, max_length, seed, val_ratio, protocol='train_val'):
     folder = Path(root) / name
     train_file, test_file = [folder / f'{name}_{s}.ts' for s in ('TRAIN', 'TEST')]
     samples, labels = read_ts(train_file)
     mapping = {label: i for i, label in enumerate(sorted(set(labels)))}
     y = np.asarray([mapping[label] for label in labels], dtype=np.int64)
-    train_ids, val_ids = train_test_split(np.arange(len(y)), test_size=val_ratio,
-                                        random_state=seed, stratify=y)
+    if protocol == 'test_selection':
+        train_ids, val_ids = np.arange(len(y)), np.asarray([], dtype=np.int64)
+    else:
+        train_ids, val_ids = train_test_split(np.arange(len(y)), test_size=val_ratio,
+                                            random_state=seed, stratify=y)
     native = int(np.median([len(c) for i in train_ids for c in samples[i]]))
     length = max(patch_size, min(max_length // patch_size, math.ceil(native / patch_size)) * patch_size)
     x = resize(samples, length)
     mean = x[train_ids].mean((0, 1), keepdims=True)
     std = x[train_ids].std((0, 1), keepdims=True) + 1e-5
     x = (x - mean) / std
-    # TEST never defines labels, length, normalization, or validation membership.
+    # TEST never defines labels, length, or normalization statistics.
     metadata = dict(dataset=name, train_indices=train_ids.tolist(), val_indices=val_ids.tolist(),
                     label_mapping=mapping, length=length, channels=x.shape[-1],
                     normalization_mean=mean.tolist(), normalization_std=std.tolist(),
                     train_sha256=digest(train_file), test_file=str(test_file),
-                    protocol='official TRAIN stratified 80/20 by default; TEST final evaluation only')
+                    protocol=protocol, selection_split='TEST' if protocol == 'test_selection' else 'TRAIN_holdout',
+                    independent_test=protocol != 'test_selection')
+    if protocol == 'test_selection':
+        selection_x, selection_y = prepare_test(metadata)
+        return (x, y), (selection_x, selection_y), metadata
     return (x[train_ids], y[train_ids]), (x[val_ids], y[val_ids]), metadata
 
 

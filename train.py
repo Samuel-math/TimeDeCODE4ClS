@@ -63,7 +63,7 @@ def run(args, name):
         with (out / 'metrics.jsonl').open('a') as stream:
             stream.write(json.dumps(row) + '\n')
     (xt, yt), (xv, yv), meta = prepare(args.data_root, name, args.patch_size,
-                                        args.max_length, args.seed, args.val_ratio)
+                                        args.max_length, args.seed, args.val_ratio, args.protocol)
     (out / 'data_protocol.json').write_text(json.dumps(meta, indent=2))
     train = loader(xt, yt, args.batch_size, True)
     val = loader(xv, yv, args.batch_size)
@@ -155,7 +155,9 @@ def run(args, name):
     x_test, y_test = prepare_test(meta)
     test_tokens = encode_data(vq, x_test, args.batch_size, args.device)
     metrics = evaluate(model, loader(test_tokens, y_test, args.batch_size), args.device)
-    result = dict(dataset=name, seed=args.seed, best_epoch=best_epoch, val_accuracy=best_key[0],
+    result = dict(dataset=name, seed=args.seed, protocol=args.protocol,
+                  selection_split=meta['selection_split'], independent_test=meta['independent_test'],
+                  best_epoch=best_epoch, val_accuracy=best_key[0],
                   test_accuracy=metrics['accuracy'], test_loss=metrics['loss'],
                   train_size=len(yt), val_size=len(yv), test_size=len(y_test),
                   test_sha256=digest(meta['test_file']))
@@ -170,6 +172,8 @@ def main():
     p.add_argument('--datasets', nargs='+', choices=DATASETS, default=DATASETS)
     p.add_argument('--data-root', default='datasets/UEA')
     p.add_argument('--output', default='results/r1')
+    p.add_argument('--protocol', choices=['train_val', 'test_selection'], default='train_val',
+                   help='test_selection uses official TEST for stage selection and classification early stopping; not independent test evaluation')
     p.add_argument('--device', default='cuda' if torch.cuda.is_available() else 'cpu')
     for key, value in dict(seed=42, patch_size=8, max_length=512, dim=64, codes=64, layers=2,
                            batch_size=16, cb_patch_batch=4096, cb_epochs=20, pre_epochs=30,
