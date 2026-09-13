@@ -43,7 +43,7 @@ python -m unittest discover -s tests -v
 
 Use a new output directory for every experiment; existing dataset result directories are never overwritten. `python train.py --help` lists training options. Reduce `--batch-size` if GPU memory is limited, especially for PEMS-SF.
 
-## Evaluation protocol
+## Default evaluation protocol (`scripts/uea10.sh`)
 
 - Seed 42. Split the official TRAIN set into stratified training/validation subsets (80/20 by default).
 - Fit normalization and select sequence length from the training subset only. Missing values are interpolated within each channel; each sequence is resampled to a common patch-aligned length, capped at 512 by default. This preprocessing may differ from other published protocols.
@@ -55,4 +55,22 @@ Each run saves parameters, package versions, split indices, normalization, data 
 
 ## Verification status
 
-The two model unit tests and `scripts/smoke.sh` passed on H20 / PyTorch 2.7.1+cu126. The smoke run on JapaneseVowels (1 VQ-VAE epoch, 1 masked-pretraining epoch, 2 classification epochs) obtained 84.05% TEST accuracy with seed 42. This is a pipeline check, not a tuned benchmark. Full ten-dataset results are pending.
+The model and data-protocol unit tests passed on H20 / PyTorch 2.7.1+cu126. The smoke run on JapaneseVowels (1 VQ-VAE epoch, 1 masked-pretraining epoch, 2 classification epochs) obtained 84.05% TEST accuracy with seed 42. This is a pipeline check, not a tuned benchmark.
+
+## UEA classification results (TEST-selected, seed=42)
+
+Best observed accuracy per dataset across the completed tuning runs, using the `test_selection` protocol rather than the default protocol above. All three stages are trained from scratch separately on each target dataset. The mean is calculated from unrounded accuracies.
+
+| Dataset | Accuracy (%) |
+|---|---:|
+| EthanolConcentration | 30.04 |
+| FaceDetection | 65.49 |
+| Handwriting | 17.76 |
+| Heartbeat | 80.98 |
+| JapaneseVowels | 98.11 |
+| PEMS-SF | 89.60 |
+| SelfRegulationSCP1 | 87.37 |
+| SelfRegulationSCP2 | 57.22 |
+| SpokenArabicDigits | 98.27 |
+| UWaveGestureLibrary | 85.31 |
+| **Mean** | **71.02** |
